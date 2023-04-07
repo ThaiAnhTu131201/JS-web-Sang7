@@ -1,0 +1,23 @@
+.navbar{
+    font-family: 'Roboto Slab',serif;
+    font-size: 17px;
+    line-height: 26px;
+    text-transform: uppercase;
+    box-shadow: 0 7px 7px -7px blue;
+    -webkit-box-shadow: 0 7px 7px -7px blue;
+    border-bottom: solid blue !important;
+  }
+  
+  .nav-link{
+    font-weight: 300 !important;
+  }
+  
+  .active {
+    border-bottom: 1px solid black;
+  }
+  
+  .navbar-brand {
+    font-weight: 700;
+    font-family: "roboto", sans-serif;
+  }
+  
