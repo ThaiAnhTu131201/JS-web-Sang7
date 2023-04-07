@@ -1,4 +1,5 @@
 import productModel from "../models/productModel.js";
+import categoryModel from "../models/categoryModel.js";
 import fs from 'fs';
 import slugify from "slugify";
 
@@ -181,3 +182,88 @@ export const updateProductController = async (req, res) => {
       });
     }
   };
+  
+//product filter
+export const productFiltersController = async (req, res) => {
+  try{
+    const {checked, radio} = req.body;
+    let args = {};
+    if(checked.length > 0) {
+      args.category = checked;
+    }
+    if(radio.length){
+      args.price = {$gte: radio[0], $lte:radio[1]}
+    }
+    const products = await productModel.find(args);
+    res.status(200).send({
+      success:true,
+      products
+    })
+  } catch(err){
+    console.log(err);
+    res.status(400).send({
+      success:false,
+      message:'Error while Filtering product'
+    })
+  }
+};
+
+//product count
+export const productCountController = async (req,res) => {
+  try{
+    const total = await productModel.find({}).estimatedDocumentCount()
+    res.status(200).send({
+      success:true,
+      total
+    })
+  }catch(err){
+    console.log(err);
+    res.status(400).send({
+      success:false,
+      message:'Error while Filtering product'
+    })
+  }
+}
+
+//search product
+export const searchController = async (req,res) => {
+  try{
+    const { keyword } = req.params;
+    const resutls = await productModel
+      .find({
+        $or: [
+          { name: { $regex: keyword, $options: "i" } },
+          { description: { $regex: keyword, $options: "i" } },
+        ],
+      })
+      .select("-photo");
+    res.json(resutls);
+  }catch(err){
+    console.log(err);
+    res.status(400).send({
+      success:false,
+      message:'Error while Search product',
+      err
+    })
+  }
+}
+
+// get prdocyst by catgory
+export const productCategoryController = async (req, res) => {
+  try {
+    const category = await categoryModel.findOne({ slug: req.params.slug });
+    const products = await productModel.find({ category }).populate("category");
+    res.status(200).send({
+      success: true,
+      category,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      error,
+      message: "Error While Getting products",
+    });
+  }
+};
