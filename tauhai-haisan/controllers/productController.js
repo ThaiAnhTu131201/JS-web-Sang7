@@ -48,7 +48,6 @@ export const createProductController = async (req, res) => {
     }
   };
 
-
 //get all products
 export const getProductController = async (req, res) => {
     try {
@@ -114,7 +113,6 @@ export const productPhotoController = async (req, res) => {
     }
   };
 
-  
 //delete controller
 export const deleteProductController = async (req, res) => {
     try {
@@ -264,6 +262,32 @@ export const productCategoryController = async (req, res) => {
       success: false,
       error,
       message: "Error While Getting products",
+    });
+  }
+};
+
+
+// product list base on page
+export const productListController = async (req, res) => {
+  try {
+    const perPage = 2;
+    const page = req.params.page ? req.params.page : 1;
+    const products = await productModel
+      .find({})
+      .select("-photo")
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "error in per page ctrl",
+      error,
     });
   }
 };
